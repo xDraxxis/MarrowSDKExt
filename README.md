@@ -5,4 +5,4 @@ Extended SDK Tools used to make Mods for the Marrow Interaction Engine, packaged
 
 # Forked and extended to include data classes in the SDK assemblies
 
-### For documentation, see https://github.com/RevOcelotMGS/Marrow-ExtendedSDK/
+### For documentation, see https://github.com/notnotnotswipez/Marrow-ExtendedSDK-PATCH-2
