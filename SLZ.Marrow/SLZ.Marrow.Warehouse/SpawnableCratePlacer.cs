@@ -57,6 +57,12 @@ namespace SLZ.Marrow.Warehouse
 
             throw new System.NotImplementedException();
         }
+        public void RePlaceSpawnable()
+        {
+            UnityEngine.Debug.Log("Hollowed Method: SLZ.Marrow.Warehouse.SpawnableCratePlacer.PlaceSpawnable()");
+
+            throw new System.NotImplementedException();
+        }
 
 #if UNITY_EDITOR
 
