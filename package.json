@@ -1,8 +1,8 @@
 {
-  "name": "com.stresslevelzero.marrow.sdk",
+  "name": "com.stresslevelzero.marrow.sdk.extended",
   "version": "0.6.0",
-  "displayName": "Marrow SDK",
-  "description": "Marrow Software Development Kit. Used to create content with Pallets and Crates for Marrow infused games.",
+  "displayName": "Extended Marrow SDK",
+  "description": "Extended Marrow Software Development Kit. Used to create content with Pallets and Crates for Marrow infused games.",
   "unity": "2021.3",
   "dependencies": {
     "com.unity.addressables": "1.21.12",
