@@ -28,7 +28,6 @@ namespace SLZ.MarrowEditor
         public Texture2D crateIcon;
         public Texture2D levelIcon;
         public Texture2D avatarIcon;
-        public Texture2D spawnableIcon;
         public Texture2D packPalletIcon;
         Pallet pallet;
         private static bool packing = false;
@@ -58,8 +57,6 @@ namespace SLZ.MarrowEditor
                 levelIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(MarrowSDK.GetPackagePath("Editor/Assets/Icons/Warehouse/crate-level.png"));
             if (avatarIcon == null)
                 avatarIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(MarrowSDK.GetPackagePath("Editor/Assets/Icons/Warehouse/crate-avatar.png"));
-            if (spawnableIcon == null)
-                spawnableIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(MarrowSDK.GetPackagePath("Editor/Assets/Icons/Warehouse/crate-ball.png"));
             if (packPalletIcon == null)
                 packPalletIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(MarrowSDK.GetPackagePath("Editor/Assets/Icons/Warehouse/packed-pallet.png"));
         }
@@ -142,19 +139,6 @@ namespace SLZ.MarrowEditor
                             {
                                 var wizard = CrateWizard.CreateWizard(pallet);
                                 wizard.crateType = CrateWizard.CrateType.AVATAR_CRATE;
-                            }
-
-                            GUILayout.FlexibleSpace();
-                        }
-
-                        EditorGUILayout.Space(EditorGUIUtility.singleLineHeight / 4f);
-                        using (new GUILayout.VerticalScope())
-                        {
-                            GUILayout.FlexibleSpace();
-                            if (GUILayout.Button(new GUIContent(" Spawnable Crate", spawnableIcon, "Create a new Spawnable"), GUILayout.ExpandWidth(false)))
-                            {
-                                var wizard = CrateWizard.CreateWizard(pallet);
-                                wizard.crateType = CrateWizard.CrateType.SPAWNABLE_CRATE;
                             }
 
                             GUILayout.FlexibleSpace();
