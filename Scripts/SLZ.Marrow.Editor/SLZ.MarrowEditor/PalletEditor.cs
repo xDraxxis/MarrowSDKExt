@@ -216,6 +216,18 @@ namespace SLZ.MarrowEditor
                                 PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android).Forget();
                                 installSuccess = null;
                             }
+                            
+                            if (GUILayout.Button(new GUIContent("Pack for PC (Deduped)", "Build the pallet for PC with Deduped Assets"), GUILayout.ExpandWidth(false)))
+                            {
+                                PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, true).Forget();
+                                installSuccess = null;
+                            }
+
+                            if (GUILayout.Button(new GUIContent("Pack for Quest (Deduped)", "Build the pallet for Android with Deduped Assets"), GUILayout.ExpandWidth(false)))
+                            {
+                                PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android, true).Forget();
+                                installSuccess = null;
+                            }
 
                             GUILayout.FlexibleSpace();
                         }
