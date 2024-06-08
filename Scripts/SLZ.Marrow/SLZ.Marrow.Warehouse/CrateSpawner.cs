@@ -69,6 +69,12 @@ namespace SLZ.Marrow.Warehouse
             throw new System.NotImplementedException();
         }
 
+        public void ReSpawnSpawnable()
+        {
+            UnityEngine.Debug.Log("Hollowed Method: SLZ.Marrow.Warehouse.CrateSpawner.SetSpawnable()");
+            throw new System.NotImplementedException();
+        }
+
 #if UNITY_EDITOR
         [DrawGizmo(GizmoType.Active | GizmoType.Selected | GizmoType.NonSelected)]
         private static void DrawPreviewGizmo(CrateSpawner spawner, GizmoType gizmoType)
