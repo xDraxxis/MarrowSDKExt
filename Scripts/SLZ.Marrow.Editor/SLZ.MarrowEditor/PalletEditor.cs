@@ -90,6 +90,7 @@ namespace SLZ.MarrowEditor
             EditorGUI.BeginDisabledGroup(true);
             LockedPropertyField(internalProperty, null, true);
             EditorGUI.EndDisabledGroup();
+            deduped = EditorGUILayout.Toggle(new GUIContent("Deduped Pack"), deduped);
             EditorGUILayout.Space();
             using (new GUILayout.VerticalScope())
             {
@@ -208,7 +209,6 @@ namespace SLZ.MarrowEditor
                         {
                             GUILayout.FlexibleSpace();
                             
-                            deduped = EditorGUILayout.Toggle(new GUIContent("Toggle Deduped"), deduped);
                             if (GUILayout.Button(new GUIContent("Pack for PC", "Build the pallet for PC"), GUILayout.ExpandWidth(false)))
                             {
                                 PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, deduped).Forget();
