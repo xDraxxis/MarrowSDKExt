@@ -23,6 +23,7 @@ namespace SLZ.MarrowEditor
         SerializedProperty changelogProperty;
         SerializedProperty palletDepsProperty;
         SerializedProperty marrowGameProperty;
+        SerializedProperty dedupedProperty;
         private bool createCrateFoldout;
         private bool packFoldout;
         public Texture2D crateIcon;
@@ -49,6 +50,7 @@ namespace SLZ.MarrowEditor
             tagsProperty = serializedObject.FindProperty("_tags");
             changelogProperty = serializedObject.FindProperty("_changeLogs");
             palletDepsProperty = serializedObject.FindProperty("_palletDependencies");
+            dedupedProperty = serializedObject.FindProperty("deduped");
             pallet = (Pallet)serializedObject.targetObject;
             createCrateFoldout = pallet.Crates.Count <= 0 && pallet.DataCards.Count <= 0;
             packFoldout = Directory.Exists(AddressablesManager.EvaluateProfileValueBuildPathForPallet(pallet, AddressablesManager.ProfilePalletID));
@@ -88,6 +90,7 @@ namespace SLZ.MarrowEditor
             EditorGUI.BeginDisabledGroup(true);
             LockedPropertyField(internalProperty, null, true);
             EditorGUI.EndDisabledGroup();
+            LockedPropertyField(dedupedProperty);
             EditorGUILayout.Space();
             using (new GUILayout.VerticalScope())
             {
@@ -205,27 +208,16 @@ namespace SLZ.MarrowEditor
                         using (new GUILayout.VerticalScope())
                         {
                             GUILayout.FlexibleSpace();
+                            
                             if (GUILayout.Button(new GUIContent("Pack for PC", "Build the pallet for PC"), GUILayout.ExpandWidth(false)))
                             {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64).Forget();
+                                PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, pallet.deduped).Forget();
                                 installSuccess = null;
                             }
 
                             if (GUILayout.Button(new GUIContent("Pack for Quest", "Build the pallet for Android"), GUILayout.ExpandWidth(false)))
                             {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android).Forget();
-                                installSuccess = null;
-                            }
-                            
-                            if (GUILayout.Button(new GUIContent("Pack for PC (Deduped)", "Build the pallet for PC with Deduped Assets"), GUILayout.ExpandWidth(false)))
-                            {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, true).Forget();
-                                installSuccess = null;
-                            }
-
-                            if (GUILayout.Button(new GUIContent("Pack for Quest (Deduped)", "Build the pallet for Android with Deduped Assets"), GUILayout.ExpandWidth(false)))
-                            {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android, true).Forget();
+                                PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android, pallet.deduped).Forget();
                                 installSuccess = null;
                             }
 
