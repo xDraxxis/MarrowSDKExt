@@ -64,6 +64,8 @@ namespace SLZ.MarrowEditor
                 packPalletIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(MarrowSDK.GetPackagePath("Editor/Assets/Icons/Warehouse/packed-pallet.png"));
         }
 
+        private bool deduped = false;
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -205,27 +207,17 @@ namespace SLZ.MarrowEditor
                         using (new GUILayout.VerticalScope())
                         {
                             GUILayout.FlexibleSpace();
+                            
+                            deduped = EditorGUILayout.Toggle(new GUIContent("Toggle Deduped"), deduped);
                             if (GUILayout.Button(new GUIContent("Pack for PC", "Build the pallet for PC"), GUILayout.ExpandWidth(false)))
                             {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64).Forget();
+                                PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, deduped).Forget();
                                 installSuccess = null;
                             }
 
                             if (GUILayout.Button(new GUIContent("Pack for Quest", "Build the pallet for Android"), GUILayout.ExpandWidth(false)))
                             {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android).Forget();
-                                installSuccess = null;
-                            }
-                            
-                            if (GUILayout.Button(new GUIContent("Pack for PC (Deduped)", "Build the pallet for PC with Deduped Assets"), GUILayout.ExpandWidth(false)))
-                            {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, true).Forget();
-                                installSuccess = null;
-                            }
-
-                            if (GUILayout.Button(new GUIContent("Pack for Quest (Deduped)", "Build the pallet for Android with Deduped Assets"), GUILayout.ExpandWidth(false)))
-                            {
-                                PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android, true).Forget();
+                                PackPalletWithValidation(pallet, BuildTargetGroup.Android, BuildTarget.Android, deduped).Forget();
                                 installSuccess = null;
                             }
 
