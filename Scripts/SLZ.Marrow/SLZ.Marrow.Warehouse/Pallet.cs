@@ -12,7 +12,11 @@ using UnityEditor;
 namespace SLZ.Marrow.Warehouse
 {
     public partial class Pallet : Scannable, ISerializationCallbackReceiver
-    {
+    {	
+		
+		[HideInInspector]
+		public bool deduped;
+
         [SerializeField]
         private string _author;
         public string Author
