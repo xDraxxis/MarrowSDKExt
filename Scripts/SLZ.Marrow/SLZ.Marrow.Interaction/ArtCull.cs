@@ -1,28 +1,54 @@
-﻿using System;
-using SLZ.Marrow.Utilities;
+﻿using SLZ.Marrow.Utilities;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace SLZ.Marrow.Interaction
 {
-	// Token: 0x0200012D RID: 301
 	public class ArtCull : MarrowBehaviour
 	{
-		// Token: 0x06000A8F RID: 2703 RVA: 0x000044BA File Offset: 0x000026BA
+		[SerializeField]
+		private LODGroup[] _lodGroups;
+
+		[SerializeField]
+		private Renderer[] _renderers;
+
 		private void OnEnable()
 		{
 		}
 
-		// Token: 0x06000A90 RID: 2704 RVA: 0x000044BC File Offset: 0x000026BC
 		private void OnDisable()
 		{
 		}
 
-		// Token: 0x04000668 RID: 1640
-		[SerializeField]
-		private LODGroup[] _lodGroups;
-
-		// Token: 0x04000669 RID: 1641
-		[SerializeField]
-		private Renderer[] _renderers;
+		public void CollectRenderers()
+		{
+			_lodGroups = gameObject.GetComponentsInChildren<LODGroup>(true);
+			_renderers = gameObject.GetComponentsInChildren<Renderer>(true);
+#if UNITY_EDITOR
+			EditorUtility.SetDirty(this);
+#endif
+		}
 	}
+
+#if UNITY_EDITOR
+	[CustomEditor(typeof(ArtCull))]
+	[DisallowMultipleComponent]
+	public class ArtCullEditor : Editor 
+	{
+	    public override void OnInspectorGUI()
+	    {
+			ArtCull behaviour = (ArtCull)target;
+
+    	    if(GUILayout.Button("Collect Renderers"))
+        	{
+				behaviour.CollectRenderers();
+        	}
+	
+        	DrawDefaultInspector();
+	    }
+	}
+#endif
+
 }
