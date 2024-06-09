@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using SLZ.Marrow.Utilities;
-using SLZ.Marrow.Data;
 using SLZ.Marrow.Warehouse;
 using SLZ.Marrow.Pool;
 using SLZ.Marrow.Zones;
 using UnityEngine;
+using System.Linq;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace SLZ.Marrow.Interaction
 {
@@ -440,8 +444,6 @@ namespace SLZ.Marrow.Interaction
 
 		private static ComponentCache<MarrowEntity> _cache;
 
-		[Header("Marrow Entity")]
-
 		[SerializeField]
 		private MarrowBehaviour[] _behaviours;
 
@@ -504,5 +506,204 @@ namespace SLZ.Marrow.Interaction
 			Culling = 2,
 			Loading = 4
 		}
+
+		public void ValidateComponent()
+		{
+			//originalScale
+			_originalScale = gameObject.transform.localScale;
+
+			//tracker validation
+			Tracker[] trackers = GetComponentsInChildren<Tracker>(true);
+			foreach(Tracker tracker in trackers)	
+			{
+				tracker.ValidateComponent();
+			}
+
+			//bodies
+			MarrowBody[] marrowBodies = GetComponentsInChildren<MarrowBody>(true);
+			foreach(MarrowBody marrowBody in marrowBodies)	
+			{
+				marrowBody.ValidateComponent();
+			}
+			_bodies = marrowBodies.ToArray();
+
+			//anchor body
+			if(_bodies.Length > 0)
+			{
+				_anchorBody = _bodies[0];
+			}
+
+			//joints
+			MarrowJoint[] marrowJoints = GetComponentsInChildren<MarrowJoint>(true);
+			List<MarrowJoint> validMarrowJoints = new List<MarrowJoint>();
+			foreach(MarrowJoint marrowJoint in marrowJoints)	
+			{
+				marrowJoint.ValidateComponent();
+				if(marrowJoint != null)
+				{
+					MarrowEntity parentEntity = marrowJoint.GetComponentInParent<MarrowEntity>();
+					if (this == parentEntity)
+					{
+						marrowJoint.SetEntity(this);
+					}
+					validMarrowJoints.Add(marrowJoint);
+				}
+			}
+			_joints = validMarrowJoints.ToArray();
+
+			//marrow behaviours
+			MarrowBehaviour[] marrowBehaviours = GetComponentsInChildren<MarrowBehaviour>(true);
+			List<MarrowBehaviour> linkedbehaviours = new List<MarrowBehaviour>();
+			foreach (MarrowBehaviour behaviour in marrowBehaviours)
+			{
+				MarrowEntity parentEntity = behaviour.GetComponentInParent<MarrowEntity>();
+				if (this == parentEntity)
+				{
+					behaviour.marrowEntity = this;
+					linkedbehaviours.Add(behaviour);
+				}
+			}
+			_behaviours = linkedbehaviours.ToArray();
+
+			//poolee
+			Poolee poolee = GetComponent<Poolee>();
+			if(poolee == null)
+			{
+				poolee = gameObject.AddComponent<Poolee>();
+			}
+			_poolee = poolee;
+
+			//spawn event components
+			SpawnEvents[] spawnEvents = GetComponentsInChildren<SpawnEvents>();
+			foreach(SpawnEvents spawnEvent in spawnEvents)
+			{
+				spawnEvent.ValidateComponent();
+			}
+			
+		}
     }
+
+#if UNITY_EDITOR
+	[CustomEditor(typeof(MarrowEntity))]
+	[DisallowMultipleComponent]
+	public class MarrowEntityEditor : Editor 
+	{
+	    public override void OnInspectorGUI()
+	    {
+			MarrowEntity behaviour = (MarrowEntity)target;
+
+    	    if(GUILayout.Button("Validate"))
+        	{
+				PopulateMarrowComponents(behaviour.gameObject);
+			}
+	
+        	DrawDefaultInspector();
+	    }
+
+		[MenuItem("GameObject/[Experimental] Delete Marrow Components", false, 0)]
+    	public static void DeleteMarrowComponents(MenuCommand menuCommand) {
+    	    var selected = Selection.gameObjects[0];
+			if(selected == null)
+			{
+				return;
+			}
+
+			if( EditorUtility.DisplayDialog("Confirmation Dialog", "Delete ALL the Marrow Components?", "Yes", "No") )
+			{
+    	    	MarrowBody[] marrowBodies = selected.GetComponentsInChildren<MarrowBody>();
+    	    	Tracker[] trackers = selected.GetComponentsInChildren<Tracker>();
+    	    	MarrowJoint[] marrowJoints = selected.GetComponentsInChildren<MarrowJoint>();
+    	    	MarrowEntity[] marrowEntities = selected.GetComponentsInChildren<MarrowEntity>();
+    	    	MarrowBehaviour[] marrowBehaviours = selected.GetComponentsInChildren<MarrowBehaviour>();
+    	    	Poolee[] poolees = selected.GetComponentsInChildren<Poolee>();
+				Undo.RecordObjects(marrowBodies, "undo bodies");
+				Undo.RecordObjects(marrowJoints, "undo joints");
+				Undo.RecordObjects(marrowEntities, "undo entities");
+				//Undo.RecordObjects(marrowBehaviours, "undo behaviours");
+				Undo.RecordObjects(poolees, "undo poolees");
+
+				foreach(MarrowBody body in marrowBodies)
+				{
+					Object.DestroyImmediate(body);
+				}
+				foreach(Tracker tracker in trackers)
+				{
+					Undo.RecordObject(tracker.gameObject, tracker.gameObject.name);
+					Object.DestroyImmediate(tracker.gameObject);
+				}
+				foreach(MarrowJoint joint in marrowJoints)
+				{
+					Object.DestroyImmediate(joint);
+				}
+				foreach(MarrowEntity entity in marrowEntities)
+				{
+					Object.DestroyImmediate(entity);
+				}
+				//foreach(MarrowBehaviour behaviour in marrowBehaviours)
+				//{
+				//	Object.DestroyImmediate(behaviour);
+				//}
+				foreach(Poolee poolee in poolees)
+				{
+					Object.DestroyImmediate(poolee);
+				}
+				
+#if UNITY_EDITOR
+				EditorUtility.SetDirty(selected);
+#endif
+			}
+    	}
+
+		[MenuItem("GameObject/[Experimental] Populate Marrow Components", false, 0)]
+    	public static void PopulateMarrowComponent_button(MenuCommand menuCommand) {
+			if( EditorUtility.DisplayDialog("Confirmation Dialog", "This will populate necessary components for the entities. Make sure you backup this object", "Yes", "No") )
+			{
+				PopulateMarrowComponents(Selection.activeGameObject);
+			}
+		}
+
+    	public static void PopulateMarrowComponents(GameObject go) {
+			if(go == null)
+			{
+				return;
+			}
+
+			MarrowEntity marrowEntity = go.GetComponent<MarrowEntity>();
+			if( marrowEntity == null )
+			{
+				go.AddComponent<MarrowEntity>();
+			}
+
+			Rigidbody[] rigidbodies = go.GetComponentsInChildren<Rigidbody>();
+			foreach(Rigidbody rigidbody in rigidbodies)
+			{
+				MarrowBody body = rigidbody.GetComponent<MarrowBody>();
+				if( body == null )
+				{
+					body = rigidbody.gameObject.AddComponent<MarrowBody>();
+				}
+			}
+			
+			ConfigurableJoint[] joints = go.GetComponentsInChildren<ConfigurableJoint>();
+			foreach(ConfigurableJoint joint in joints)
+			{
+				MarrowJoint marrowJoint = joint.GetComponent<MarrowJoint>();
+				if( marrowJoint == null )
+				{
+					marrowJoint = joint.gameObject.AddComponent<MarrowJoint>();
+				}
+			}
+
+			MarrowEntity[] marrowEntities = go.GetComponentsInChildren<MarrowEntity>();
+			foreach(MarrowEntity entity in marrowEntities)
+			{
+				entity.ValidateComponent();
+			}
+
+#if UNITY_EDITOR
+			EditorUtility.SetDirty(go);
+#endif
+    	}
+	}
+#endif
 }
