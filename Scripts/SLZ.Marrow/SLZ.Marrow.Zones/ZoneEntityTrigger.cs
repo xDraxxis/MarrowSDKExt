@@ -127,7 +127,6 @@ namespace SLZ.Marrow.Zones
 		// Token: 0x04000193 RID: 403
 		[Tooltip("Previous node(s) in the chain")]
 		[SerializeField]
-		[Interface(typeof(IVoidLogicSource), false)]
 		protected internal MonoBehaviour[] _previous;
 
 		// Token: 0x04000194 RID: 404
@@ -138,7 +137,6 @@ namespace SLZ.Marrow.Zones
 
 		// Token: 0x04000196 RID: 406
 		[SerializeField]
-		[ReadOnly(false)]
 		private float logicMultiplier;
 
 		// Token: 0x04000198 RID: 408

@@ -153,7 +153,6 @@ namespace SLZ.Marrow.Zones
 		public UltEvent<MarrowEntity> OnEntityTriggerExit;
 
 		// Token: 0x0400022C RID: 556
-		[ReadOnly(false)]
 		[SerializeField]
 		private float logicMultiplier;
 
