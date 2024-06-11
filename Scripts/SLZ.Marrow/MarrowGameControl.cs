@@ -266,4 +266,8 @@ namespace SLZ.Marrow
 		{
 		}
 	}
+
+	public class RegisteredSaveableInfo
+	{
+	}
 }
