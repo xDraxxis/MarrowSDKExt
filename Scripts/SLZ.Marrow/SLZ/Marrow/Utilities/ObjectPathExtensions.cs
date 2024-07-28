@@ -32,7 +32,6 @@ namespace SLZ.Marrow.Utilities
 				go = go.transform.parent.gameObject;
 				path = "/" + go.name + path;
 			}
-			Debug.Log($"Object path: {path}");
 			return path;
 		}
 	}
