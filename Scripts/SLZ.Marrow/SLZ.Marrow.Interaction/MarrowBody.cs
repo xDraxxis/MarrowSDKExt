@@ -374,6 +374,10 @@ namespace SLZ.Marrow.Interaction
 		{
 #if UNITY_EDITOR
 			Bounds bounds = GetBounds();
+			if (bounds.size == Vector3.zero)
+			{
+				bounds.size = new Vector3(0.025f,0.025f,0.05f);
+			}
 			_bounds = bounds;
 #endif
 		}
