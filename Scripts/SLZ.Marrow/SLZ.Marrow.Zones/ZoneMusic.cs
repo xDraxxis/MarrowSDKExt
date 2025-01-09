@@ -48,22 +48,22 @@ namespace SLZ.Marrow.Zones
         
         private void Play()
 	{
-		return null;
+		return;
 	}
         
 	public void PlayMusic(float fadeTime)
 	{
-		return null;
+		return;
 	}
         
 	public void StopMusic(float fadeTime)
 	{
-		return null;
+		return;
 	}
         
 	private void Stop()
 	{
-		return null;
+		return;
 	}
     }
 }
