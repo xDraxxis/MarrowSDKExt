@@ -34,7 +34,7 @@ namespace SLZ.Marrow.Zones
 
         private void Play()
 	{
-		return null;
+		return;
 	}
     }
 }
